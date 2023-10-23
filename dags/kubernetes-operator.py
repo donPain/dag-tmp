@@ -32,10 +32,11 @@ with DAG(
     osmosis_update_file_task = KubernetesPodOperator(
         name="osmosis-processor",
         cmds=["bash", "-cx"],
-        arguments=["/osmosis/package/bin/osmosis --help > /dev/null 2>&1"],
+        arguments=["/osmosis/package/bin/osmosis --help"],
         image='334077612733.dkr.ecr.sa-east-1.amazonaws.com/routes/osmosis:latest',
         image_pull_secrets='aws-cred-new',
         startup_timeout_seconds=900,
+        get_logs=false,
         task_id="osmosis"
     )
 

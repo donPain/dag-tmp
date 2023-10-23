@@ -26,7 +26,7 @@ with DAG(
 ) as dag:
 
 
-    
+
     osmosis_update_file_task = KubernetesPodOperator(
         name="osmosis-processor",
         cmds=["bash", "-cx"],
@@ -38,7 +38,7 @@ with DAG(
     )
 
     t_1 = python_task = PythonOperator(
-        task_id="t1 _ptask",
+        task_id="t1PythonTask",
         python_callable=lambda: print('Finalizando importação com osmosis.')
     )
 

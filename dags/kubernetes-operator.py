@@ -6,7 +6,6 @@ from airflow import DAG
 from airflow.contrib.hooks.aws_hook import AwsHook
 from airflow.operators.docker_operator import DockerOperator
 from airflow.operators.bash import BashOperator
-from airflow.operators.python import PythonOperator
 from airflow.providers.cncf.kubernetes.operators.pod import KubernetesPodOperator
 from airflow.utils.dates import days_ago
 
@@ -38,7 +37,7 @@ with DAG(
     osmosis_update_file_task = KubernetesPodOperator(
             name="osmosis-processor",
             cmds=["bash", "-cx"],
-            arguments=["/osmosis/package/bin/osmosis " + osmosisExecInfo, "'echo \'{}\' > /airflow/xcom/return.json'.format(expectedReturnValue)]"],
+            arguments=["/osmosis/package/bin/osmosis " + osmosisExecInfo],
             image='334077612733.dkr.ecr.sa-east-1.amazonaws.com/routes/osmosis:latest',
             image_pull_secrets='aws-cred-new',
             startup_timeout_seconds=900,

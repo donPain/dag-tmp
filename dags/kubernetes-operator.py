@@ -32,7 +32,11 @@ with DAG(
     osmosis_update_file_task = KubernetesPodOperator(
         name="osmosis-processor",
         cmds=["bash", "-cx"],
-        arguments=["/osmosis/package/bin/osmosis --help"],
+        arguments=[
+            "/osmosis/package/bin/osmosis --help",
+            "echo '{\"success\": true}' >> /airflow/xcom/return.json",
+            "airflow xcom set --key status --value success {{ ti.xcom_pull(key='task_instance_key') }}"
+        ],
         image='334077612733.dkr.ecr.sa-east-1.amazonaws.com/routes/osmosis:latest',
         image_pull_secrets='aws-cred-new',
         startup_timeout_seconds=900,

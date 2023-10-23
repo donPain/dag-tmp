@@ -37,7 +37,6 @@ with DAG(
         image_pull_secrets='aws-cred-new',
         startup_timeout_seconds=900,
         task_id="osmosis"
-        # do_xcom_push=True
     )
 
     t_1 = BashOperator(
@@ -45,5 +44,5 @@ with DAG(
         bash_command='echo "After Osmosis"'
     )
 
-    osmosis_update_file_task >> t_1
+    osmosis_update_file_task 
 

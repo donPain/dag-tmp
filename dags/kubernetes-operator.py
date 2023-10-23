@@ -108,7 +108,9 @@ with DAG(
         cmds=["bash", "-cx"],
         arguments=["echo", "10"],
         labels={"foo": "bar"},
-        # config_file='/.kube/config',
+        command='/osmosis/package/bin/osmosis --help',
+        # docker_conn_id='docker_ecr',
+        image='334077612733.dkr.ecr.sa-east-1.amazonaws.com/routes/osmosis:latest',
         task_id="dry_run_demo",
         do_xcom_push=True,
     )

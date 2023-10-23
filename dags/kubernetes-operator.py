@@ -103,12 +103,12 @@ with DAG(
     # )
 
     k = KubernetesPodOperator(
-        name="teste_hello",
+        name="osmosis-processor",
         cmds=["/osmosis/package/bin/osmosis --help"],
-        arguments=["echo", "10"],
-        labels={"foo": "bar"},
+        # arguments=["echo", "10"],
+        # labels={"foo": "bar"},
         image='334077612733.dkr.ecr.sa-east-1.amazonaws.com/routes/osmosis:latest',
-        task_id="dry_run_demo",
+        task_id="osmosis",
         do_xcom_push=True,
     )
 

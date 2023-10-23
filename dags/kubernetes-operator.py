@@ -9,6 +9,10 @@ from airflow.operators.docker_operator import DockerOperator
 from airflow.providers.cncf.kubernetes.operators.pod import KubernetesPodOperator
 from airflow.utils.dates import days_ago
 
+
+def printTest() 
+    print("Omsosis run")
+
 default_args = {
     "owner": "don",
     "description": "Fetches and stores ECR credentials to allow Docker daemon to pull images",
@@ -41,7 +45,7 @@ with DAG(
 
     t_1 = PythonOperator(
         task_id="python-task",
-        python_callable=lambda: print('Finalizando importação com osmosis')
+        python_callable=printTest()
     )
 
     osmosis_update_file_task.dry_run() >> t_1

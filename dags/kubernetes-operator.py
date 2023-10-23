@@ -10,12 +10,6 @@ from airflow.providers.cncf.kubernetes.operators.pod import KubernetesPodOperato
 from airflow.utils.dates import days_ago
 
 
-
-def getOsmosisCommand(action):
-    return "--help"
-
-
-
 default_args = {
     "owner": "don",
     "description": "Fetches and stores ECR credentials to allow Docker daemon to pull images",
@@ -31,21 +25,22 @@ with DAG(
         schedule_interval="@hourly",
         catchup=False,
 ) as dag:
-        
-    osmosisExecInfo = getOsmosisCommand("teste");
+
+
+
 
     osmosis_update_file_task = KubernetesPodOperator(
-            name="osmosis-processor",
-            cmds=["bash", "-cx"],
-            arguments=["/osmosis/package/bin/osmosis " + osmosisExecInfo],
-            image='334077612733.dkr.ecr.sa-east-1.amazonaws.com/routes/osmosis:latest',
-            image_pull_secrets='aws-cred-new',
-            startup_timeout_seconds=900,
-            do_xcom_push=True,
-            task_id="osmosis"
-        )
+        name="osmosis-processor",
+        cmds=["bash", "-cx"],
+        arguments=["/osmosis/package/bin/osmosis --help"],
+        image='334077612733.dkr.ecr.sa-east-1.amazonaws.com/routes/osmosis:latest',
+        image_pull_secrets='aws-cred-new',
+        startup_timeout_seconds=900,
+        do_xcom_push=True,
+        task_id="osmosis"
+    )
 
-   
 
-    osmosis_update_file_task
+
+    osmosis_update_file_task 
 

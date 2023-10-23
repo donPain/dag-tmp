@@ -5,7 +5,7 @@ from airflow import DAG
 
 from airflow.contrib.hooks.aws_hook import AwsHook
 from airflow.operators.docker_operator import DockerOperator
-from ariflow.operators.bash_operator import BashOperator
+from airflow.operators.bash import BashOperator
 from airflow.providers.cncf.kubernetes.operators.pod import KubernetesPodOperator
 from airflow.utils.dates import days_ago
 

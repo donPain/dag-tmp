@@ -104,9 +104,9 @@ with DAG(
 
     k = KubernetesPodOperator(
         name="osmosis-processor",
-        cmds=["bash" , "-c /osmosis/package/bin/osmosis --help"],
-        # cmds=["bash", "ls"],
-        # arguments=["echo", "10"],
+        # cmds=["bash" , "-c /osmosis/package/bin/osmosis --help"],
+        cmds=["bash", "-cx"],
+        arguments=["/osmosis/package/bin/osmosis --help"],
         # labels={"foo": "bar"},
         image='334077612733.dkr.ecr.sa-east-1.amazonaws.com/routes/osmosis:latest',
         image_pull_secrets='aws-cred-new',

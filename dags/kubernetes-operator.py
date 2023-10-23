@@ -104,12 +104,9 @@ with DAG(
 
     k = KubernetesPodOperator(
         name="teste_hello",
-        image="debian",
-        cmds=["bash", "-cx"],
+        cmds=["/osmosis/package/bin/osmosis --help"],
         arguments=["echo", "10"],
         labels={"foo": "bar"},
-        command='/osmosis/package/bin/osmosis --help',
-        # docker_conn_id='docker_ecr',
         image='334077612733.dkr.ecr.sa-east-1.amazonaws.com/routes/osmosis:latest',
         task_id="dry_run_demo",
         do_xcom_push=True,

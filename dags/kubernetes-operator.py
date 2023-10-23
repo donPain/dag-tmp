@@ -36,7 +36,7 @@ with DAG(
         image='334077612733.dkr.ecr.sa-east-1.amazonaws.com/routes/osmosis:latest',
         image_pull_secrets='aws-cred-new',
         startup_timeout_seconds=900,
-        get_logs=false,
+        get_logs=False,
         task_id="osmosis"
     )
 

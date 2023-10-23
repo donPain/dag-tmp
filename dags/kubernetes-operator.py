@@ -27,6 +27,7 @@ with DAG(
 
 
 
+
     osmosis_update_file_task = KubernetesPodOperator(
         name="osmosis-processor",
         cmds=["bash", "-cx"],
@@ -34,12 +35,13 @@ with DAG(
         image='334077612733.dkr.ecr.sa-east-1.amazonaws.com/routes/osmosis:latest',
         image_pull_secrets='aws-cred-new',
         startup_timeout_seconds=900,
-        task_id="osmosis"
+        task_id="osmosis",
+        do_xcom_push=True,
     )
 
-    t_1 = python_task = PythonOperator(
-        task_id="t1PythonTask",
-        python_callable=lambda: print('Finalizando importação com osmosis.')
+    t_1 = PythonOperator(
+        task_id="python-task",
+        python_callable=lambda: print('Finalizando importação com osmosis')
     )
 
     osmosis_update_file_task.dry_run() >> t_1

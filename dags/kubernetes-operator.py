@@ -108,7 +108,7 @@ with DAG(
         # arguments=["echo", "10"],
         # labels={"foo": "bar"},
         image='334077612733.dkr.ecr.sa-east-1.amazonaws.com/routes/osmosis:latest',
-        image_pull_secrets='aws-cred',
+        image_pull_secrets='aws-cred-new',
         task_id="osmosis",
         do_xcom_push=True,
     )

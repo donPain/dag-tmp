@@ -36,8 +36,8 @@ with DAG(
         image='334077612733.dkr.ecr.sa-east-1.amazonaws.com/routes/osmosis:latest',
         image_pull_secrets='aws-cred-new',
         startup_timeout_seconds=900,
-        task_id="osmosis",
-        do_xcom_push=True
+        task_id="osmosis"
+        # do_xcom_push=True
     )
 
     t_1 = BashOperator(

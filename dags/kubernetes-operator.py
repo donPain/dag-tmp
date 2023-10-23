@@ -37,7 +37,7 @@ with DAG(
         image_pull_secrets='aws-cred-new',
         startup_timeout_seconds=900,
         task_id="osmosis",
-        do_xcom_push=True,
+        do_xcom_push=True
     )
 
     t_1 = BashOperator(

@@ -32,7 +32,6 @@ with DAG(
     osmosis_update_file_task = KubernetesPodOperator(
         name="osmosis-processor",
         cmds=["bash", "-cx"],
-        labels=
         arguments=[
             "/osmosis/package/bin/osmosis --help && exit 1;"
         ],

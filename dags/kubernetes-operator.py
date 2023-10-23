@@ -102,7 +102,7 @@ with DAG(
     #     ]
     # )
 
-    k_1 = KubernetesPodOperator(
+    k = KubernetesPodOperator(
         name="teste_hello",
         image="debian",
         cmds=["bash", "-cx"],
@@ -112,4 +112,6 @@ with DAG(
         task_id="dry_run_demo",
         do_xcom_push=True,
     )
+
+    k.dry_run()
 

@@ -36,14 +36,11 @@ with DAG(
         image='334077612733.dkr.ecr.sa-east-1.amazonaws.com/routes/osmosis:latest',
         image_pull_secrets='aws-cred-new',
         startup_timeout_seconds=900,
-        get_logs=False,
+        soft_fail=True,
         task_id="osmosis"
     )
 
-    t_1 = BashOperator(
-        task_id="b4s",
-        bash_command='echo "After Osmosis"'
-    )
+
 
     osmosis_update_file_task 
 

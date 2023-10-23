@@ -40,7 +40,7 @@ with DAG(
         do_xcom_push=True,
     )
 
-    t_1 = BashOperatorythonOperator(
+    t_1 = BashOperator(
         task_id="b4s",
         bash_command='echo "After Osmosis"'
     )

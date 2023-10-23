@@ -45,5 +45,5 @@ with DAG(
         bash_command='echo "After Osmosis"'
     )
 
-    osmosis_update_file_task.dry_run() >> t_1
+    osmosis_update_file_task.dry_run() 
 

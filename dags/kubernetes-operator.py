@@ -33,7 +33,7 @@ with DAG(
         name="osmosis-processor",
         cmds=["bash", "-cx"],
         arguments=[
-            "/osmosis/package/bin/osmosis --help",
+            "/osmosis/package/bin/osmosis --help && sleep 10",
             "echo '{\"success\": true}' >> /airflow/xcom/return.json",
             "airflow xcom set --key status --value success {{ ti.xcom_pull(key='task_instance_key') }}"
         ],

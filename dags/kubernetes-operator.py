@@ -4,14 +4,11 @@ import subprocess
 from airflow import DAG
 
 from airflow.contrib.hooks.aws_hook import AwsHook
-from airflow.operators.python_operator import PythonOperator
 from airflow.operators.docker_operator import DockerOperator
+from ariflow.operators.bash_operator import BashOperator
 from airflow.providers.cncf.kubernetes.operators.pod import KubernetesPodOperator
 from airflow.utils.dates import days_ago
 
-
-def printTest() 
-    print("Omsosis run")
 
 default_args = {
     "owner": "don",
@@ -43,9 +40,9 @@ with DAG(
         do_xcom_push=True,
     )
 
-    t_1 = PythonOperator(
-        task_id="python-task",
-        python_callable=printTest()
+    t_1 = BashOperatorythonOperator(
+        task_id="b4s",
+        bash_command='echo "After Osmosis"'
     )
 
     osmosis_update_file_task.dry_run() >> t_1

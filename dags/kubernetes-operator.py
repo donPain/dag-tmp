@@ -31,14 +31,15 @@ with DAG(
 
     osmosis_update_file_task = KubernetesPodOperator(
         name="osmosis-processor",
-        cmds=["bash", "-cx", "echo '{\"success\": true}' > /airflow/xcom/return.json"],
+        cmds=["bash", "-cx"],
         arguments=[
             "/osmosis/package/bin/osmosis --help"
         ],
         image='334077612733.dkr.ecr.sa-east-1.amazonaws.com/routes/osmosis:latest',
         image_pull_secrets='aws-cred-new',
         startup_timeout_seconds=900,
-        do_xcom_push=True,
+        # do_xcom_push=True,
+        get_logs=False,
         task_id="osmosis"
     )
 

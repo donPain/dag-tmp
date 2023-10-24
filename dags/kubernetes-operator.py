@@ -33,7 +33,7 @@ with DAG(
         name="osmosis-processor",
         cmds=["bash", "-cx"],
         arguments=[
-            "/osmosis/package/bin/osmosis --help && exit 1;"
+            "/osmosis/package/bin/osmosis --help"
         ],
         image='334077612733.dkr.ecr.sa-east-1.amazonaws.com/routes/osmosis:latest',
         image_pull_secrets='aws-cred-new',
@@ -41,7 +41,7 @@ with DAG(
         reattach_on_restart=False,
         is_delete_operator_pod=True,
         # do_xcom_push=True,
-        get_logs=False,
+        # get_logs=False,
         task_id="osmosis"
     )
 

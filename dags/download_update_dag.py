@@ -24,7 +24,7 @@ def download_osc_files(osc_links):
     for link in osc_links:
         import urllib.request
         file_name = download_dir + datetime.now().strftime("%d-%m-%Y") + os.path.basename(link)
-        os.mkdir(file, 0o666)
+        os.mkdir(file_name, 0o666)
         urllib.request.urlretrieve(link, file_name)
 
 

@@ -10,8 +10,8 @@ download_dir = "/opt/airflow/workdir/"
 
 def download_community_updates(continent, date_ini=None):
 
-    today_date = datetime.now().strftime("%d/%m/%Y")
-    download_dir_today = os.path.join(download_dir, today_date)
+    today_date = datetime.now().strftime("%d-%m-%Y")
+    download_dir_today = os.path.join(download_dir + "/" + continent, today_date)
 
     if not os.path.exists(download_dir_today):
         os.makedirs(download_dir_today)
@@ -21,7 +21,7 @@ def download_community_updates(continent, date_ini=None):
     if folder_link:
         osc_links = get_osc_links(folder_link, date_ini)
         if osc_links:
-            download_osc_files(osc_links, download_dir_today)
+            download_osc_files(osc_links, download_dir_today,continent)
             print("Downloads concluídos")
         else:
             print("Sem novas atualizações")

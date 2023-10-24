@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup
 from datetime import datetime
 
 base_url = 'http://download.geofabrik.de/'
-download_dir = "/opt/airflow/workdir/"
+
 
 def download_community_updates(continent, date_ini=None):
     folder_link = get_folder_link(continent, date_ini)
@@ -23,8 +23,9 @@ def download_community_updates(continent, date_ini=None):
 def download_osc_files(osc_links):
     for link in osc_links:
         import urllib.request
-        file_name = download_dir + datetime.now().strftime("%d-%m-%Y") + os.path.basename(link)
-        os.mkdir(file_name, 0o666)
+        download_dir = f"/opt/airflow/workdir/{datetime.now().strftime("%d-%m-%Y")}"
+        os.mkdir(download_dir, 0o666)
+        file_name = download_dir + os.path.basename(link)
         urllib.request.urlretrieve(link, file_name)
 
 

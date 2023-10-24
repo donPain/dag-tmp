@@ -6,26 +6,32 @@ from bs4 import BeautifulSoup
 from datetime import datetime
 
 base_url = 'http://download.geofabrik.de/'
-
+download_dir = "/opt/airflow/workdir/"
 
 def download_community_updates(continent, date_ini=None):
+
+    today_date = datetime.now().strftime("%d/%m/%Y")
+    download_dir_today = os.path.join(download_dir, today_date)
+
+    if not os.path.exists(download_dir_today):
+        os.makedirs(download_dir_today)
+
+
     folder_link = get_folder_link(continent, date_ini)
     if folder_link:
         osc_links = get_osc_links(folder_link, date_ini)
         if osc_links:
-            download_osc_files(osc_links)
+            download_osc_files(osc_links, download_dir_today)
             print("Downloads concluídos")
         else:
             print("Sem novas atualizações")
     else:
         print("Sem novas atualizações")
 
-def download_osc_files(osc_links):
+def download_osc_files(osc_links, download_dir_today):
     for link in osc_links:
         import urllib.request
-        download_dir = "/opt/airflow/workdir/" + datetime.now().strftime("%d-%m-%Y")
-        os.mkdir(download_dir, 0o666)
-        file_name = download_dir + os.path.basename(link)
+        file_name = os.path.join(download_dir_today, os.path.basename(link))  # Caminho completo do arquivo
         urllib.request.urlretrieve(link, file_name)
 
 

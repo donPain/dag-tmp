@@ -6,11 +6,9 @@ from airflow.exceptions import AirflowException
 from datetime import datetime
 
 CAMINHO_LOCAL_ARQUIVO = '/opt/airflow/downloads/859.osc.gz'
-S3_BUCKET_NAME = 'bucket-feliphevs'
+S3_BUCKET_NAME = 'routes-dag-exec'
 PASTA_NO_S3 = datetime.now().strftime("%d-%m-%Y")
-NOME_DO_ARQUIVO_NO_S3 = '859.osc.gz'
-S3_HOOK = S3Hook(aws_conn_id="aws_default")
-caminho_objeto_s3 = PASTA_NO_S3 + NOME_DO_ARQUIVO_NO_S3
+S3_HOOK = S3Hook(aws_conn_id="aws_pessoal")
 
 def upload_arquivo_para_s3():
 

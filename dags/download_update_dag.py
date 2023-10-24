@@ -21,7 +21,7 @@ def download_community_updates(continent, date_ini=None):
     if folder_link:
         osc_links = get_osc_links(folder_link, date_ini)
         if osc_links:
-            download_osc_files(osc_links, download_dir_today,continent)
+            download_osc_files(osc_links, download_dir_today)
             print("Downloads concluídos")
         else:
             print("Sem novas atualizações")

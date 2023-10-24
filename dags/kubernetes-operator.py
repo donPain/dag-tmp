@@ -47,15 +47,14 @@ with DAG(
 
     createTmp  = BashOperator(
         task_id="bash_task",
-        bash_command='echo "Hi from bash operator" >> /opt/airflow/workdir/test.txt'
+        bash_command='cat /opt/airflow/workdir/teste.txt'
     )
 
-    readTmp =  BashOperator(
-        task_id="bash_task_2",
-        bash_command='cat /opt/airflow/workdir/test.txt'
-    )
+    # readTmp =  BashOperator(
+    #     task_id="bash_task_2",
+    #     bash_command='cat /opt/airflow/workdir/test.txt'
+    # )
 
 
 
-    createTmp >>  readTmp
-
+    createTmp 

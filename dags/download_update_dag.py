@@ -23,7 +23,7 @@ def download_community_updates(continent, date_ini=None):
 def download_osc_files(osc_links):
     for link in osc_links:
         import urllib.request
-        download_dir = f"/opt/airflow/workdir/{datetime.now().strftime("%d-%m-%Y")}"
+        download_dir = "/opt/airflow/workdir/" + datetime.now().strftime("%d-%m-%Y")
         os.mkdir(download_dir, 0o666)
         file_name = download_dir + os.path.basename(link)
         urllib.request.urlretrieve(link, file_name)

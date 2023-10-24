@@ -51,7 +51,7 @@ with DAG(
     )
 
     readTmp =  BashOperator(
-        task_id="bash_task",
+        task_id="bash_task_2",
         bash_command='cat /opt/airflow/workdir/test.txt'
     )
 

@@ -10,6 +10,7 @@ base_url = 'http://download.geofabrik.de/'
 
 def download_continent_updates(continent, date_ini=None, output_dir=None):
     today_date = datetime.now().strftime("%d-%m-%Y")
+    print(f"Download: {continent} {date_ini} {output_dir} ")
     download_dir_today = os.path.join(output_dir + continent, today_date)
 
     if not os.path.exists(download_dir_today):

@@ -30,7 +30,7 @@ with DAG(
         cmds=["bash", "-cx"],
         arguments=[
             # "/osmosis/package/bin/osmosis --help && sleep 20"
-            "sleep 20"
+            "sleep 500"
         ],
         image='334077612733.dkr.ecr.sa-east-1.amazonaws.com/routes/osmosis:latest',
         image_pull_secrets='aws-cred-new',

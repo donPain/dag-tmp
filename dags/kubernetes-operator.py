@@ -11,6 +11,14 @@ from airflow.providers.cncf.kubernetes.operators.pod import KubernetesPodOperato
 from airflow.utils.dates import days_ago
 
 
+volume = k8s.V1Volume(
+    name="workdir-pv",
+    persistent_volume_claim=k8s.V1PersistentVolumeClaimVolumeSource(claim_name="airflow-claim"),
+)
+
+volume_mount = k8s.V1VolumeMount(
+    name="workdir-pv", mount_path="/opt/airflow/workdir", sub_path=None, read_only=False
+)
 
 
 default_args = {
@@ -44,20 +52,8 @@ with DAG(
         # do_xcom_push=True,
         # get_logs=False,
         task_id="osmosis",
-        volumes=[
-            {
-                'name': 'workdir-pv',
-                'persistentVolumeClaim': {
-                    'claimName': 'airflow-claim'
-                }
-            }
-        ],
-        volume_mounts=[
-            {
-                'mountPath': '/opt/airflow/workdir',
-                'name': 'workdir-pv',
-            }
-        ]
+        volumes=[volume],
+        volume_mounts=[volume_mount]
     )
 
     # createTmp  = BashOperator(

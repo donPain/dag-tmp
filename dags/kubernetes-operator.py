@@ -1,4 +1,6 @@
 import subprocess
+from kubernetes.client import models as k8s
+
 
 from airflow import DAG
 
@@ -7,6 +9,8 @@ from airflow.operators.docker_operator import DockerOperator
 from airflow.operators.bash import BashOperator
 from airflow.providers.cncf.kubernetes.operators.pod import KubernetesPodOperator
 from airflow.utils.dates import days_ago
+
+
 
 
 default_args = {
@@ -39,7 +43,21 @@ with DAG(
         is_delete_operator_pod=True,
         # do_xcom_push=True,
         # get_logs=False,
-        task_id="osmosis"
+        task_id="osmosis",
+        volumes=[
+            {
+                'name': 'workdir-pv',
+                'persistentVolumeClaim': {
+                    'claimName': 'airflow-claim'
+                }
+            }
+        ],
+        volume_mounts=[
+            {
+                'mountPath': '/opt/airflow/workdir',
+                'name': 'workdir-pv',
+            }
+        ]
     )
 
     # createTmp  = BashOperator(

@@ -4,11 +4,15 @@ from airflow import DAG
 from airflow.operators.python import PythonOperator
 from bs4 import BeautifulSoup
 from datetime import datetime
+from airflow.providers.amazon.aws.hooks.s3 import S3Hook
+from airflow.exceptions import AirflowException
 
 base_url = 'http://download.geofabrik.de/'
 download_dir = "/opt/airflow/workdir/"
+S3_BUCKET_NAME = 'routes-dag-exec'
+S3_HOOK = S3Hook(aws_conn_id="aws_pessoal")
 
-def download_community_updates(continent, date_ini=None):
+def donwload_from_geofabrik(continent, date_ini=None):
 
     today_date = datetime.now().strftime("%d-%m-%Y")
     download_dir_today = os.path.join(download_dir + "/" + continent, today_date)
@@ -28,11 +32,13 @@ def download_community_updates(continent, date_ini=None):
     else:
         print("Sem novas atualizações")
 
-def download_osc_files(osc_links, download_dir_today):
+def download_osc_files(ti, osc_links, download_dir_today):
     for link in osc_links:
         import urllib.request
         file_name = os.path.join(download_dir_today, os.path.basename(link))  # Caminho completo do arquivo
         urllib.request.urlretrieve(link, file_name)
+    
+    ti.xcom_push(key="task-dir", value=download_dir_today)
 
 
 def get_folder_link(continent, date_ini=None):
@@ -82,6 +88,25 @@ def get_osc_links(folder_link, date_ini):
     else:
         return None
     
+
+def upload_to_s3(ti):
+    s3Folder = continent +"/"+ datetime.now().strftime("%d-%m-%Y")
+    filePath = ti.xcom_pull(key="task-dir", task_ids='download_from_geofabrik')
+    for root, dirs, files in os.walk(localDir):
+        for file_name in files:
+            print(file_name)
+            # local_path = os.path.join(root, file_name)
+            # s3_key = os.path.join(s3Folder, file_name)
+            # try:
+            #     S3_HOOK.load_file(
+            #         filename=local_path,
+            #         key=s3_key,
+            #         bucket_name=S3_BUCKET_NAME
+            #     )
+            #     print(f"Arquivo {file_name} carregado com sucesso no Amazon S3")
+            # except AirflowException as e:
+            #     print(f"Erro ao carregar o arquivo {file_name} para o Amazon S3: {str(e)}")
+        
 default_args = {
     'owner': 'airflow',
     'start_date': datetime(2023, 10, 18)
@@ -89,12 +114,19 @@ default_args = {
 
 dagRotas = DAG('download_update', default_args=default_args, schedule_interval=None)
 
-download_update_task = PythonOperator(
+download_from_geofabrik = PythonOperator(
     task_id='download_update_task',
-    python_callable=download_community_updates,
+    python_callable=download_from_geofabrik,
     op_args=["south-america", datetime(2023,10,20)],
     dag=dagRotas
 )
 
-download_update_task
+upload_to_s3 = python_task = PythonOperator(
+    task_id="upload_to_s3",
+    python_callable=upload_to_s3
+    dag=dagRotas
+)
+
+
+download_from_geofabrik >> upload_to_s3
 

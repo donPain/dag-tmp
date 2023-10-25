@@ -109,7 +109,8 @@ def upload_to_s3(ti):
         
 default_args = {
     'owner': 'airflow',
-    'start_date': datetime(2023, 10, 18)
+    'start_date': datetime(2023, 10, 18),
+    'provide_context': True
 }
 
 dagRotas = DAG('download_update', default_args=default_args, schedule_interval=None)

@@ -1,20 +1,21 @@
 import os
 import requests
+import s3_utils
 from airflow import DAG
 from airflow.operators.python import PythonOperator
 from bs4 import BeautifulSoup
 from datetime import datetime
 from airflow.providers.amazon.aws.hooks.s3 import S3Hook
-from airflow.exceptions import AirflowException
+
 
 base_url = 'http://download.geofabrik.de/'
-download_dir = "/opt/airflow/workdir/"
-S3_BUCKET_NAME = 'routes-dag-exec'
-S3_HOOK = S3Hook(aws_conn_id="aws_pessoal")
+download_dir = "/opt/airflow/downloads/"
+S3_BUCKET_NAME = 'bucket-feliphevs'
+S3_HOOK = S3Hook(aws_conn_id="aws_default")
 
-def download_from_geofabrik(**ti,continent, date_ini=None):
+def download_from_geofabrik(continent, date_ini=None):
     today_date = datetime.now().strftime("%d-%m-%Y")
-    download_dir_today = os.path.join(download_dir + "/" + continent, today_date)
+    download_dir_today = os.path.join(download_dir + continent, today_date)
 
     if not os.path.exists(download_dir_today):
         os.makedirs(download_dir_today)
@@ -24,20 +25,22 @@ def download_from_geofabrik(**ti,continent, date_ini=None):
     if folder_link:
         osc_links = get_osc_links(folder_link, date_ini)
         if osc_links:
-            download_osc_files(ti, osc_links, download_dir_today)
+            download_osc_files(osc_links, download_dir_today)
             print("Downloads concluídos")
+            return download_dir_today
         else:
             print("Sem novas atualizações")
     else:
         print("Sem novas atualizações")
 
-def download_osc_files(ti, osc_links, download_dir_today):
+def download_osc_files(osc_links, download_dir_today):
     for link in osc_links:
         import urllib.request
         file_name = os.path.join(download_dir_today, os.path.basename(link))  # Caminho completo do arquivo
         urllib.request.urlretrieve(link, file_name)
     
-    ti.xcoms_push(key="task-dir", value=download_dir_today)
+    #ti.xcoms_push(key="task-dir", value=download_dir_today)
+    
 
 
 def get_folder_link(continent, date_ini=None):
@@ -87,13 +90,18 @@ def get_osc_links(folder_link, date_ini):
     else:
         return None
     
+# def chamar_metodo(continent):
 
-def upload_to_s3(ti):
-    s3Folder = continent +"/"+ datetime.now().strftime("%d-%m-%Y")
-    filePath = ti.xcoms_pull(key="task-dir", task_ids='download_from_geofabrik')
-    for root, dirs, files in os.walk(localDir):
+#     upload_to_s3(ti, continent)
+    
+
+def upload_to_s3(file_path, continent):
+    s3_folder = continent +"/"+ datetime.now().strftime("%d-%m-%Y")
+    print("file path: " + file_path)
+    for root, dirs, files in os.walk(file_path):
         for file_name in files:
             print(file_name)
+            s3_utils.upload_file(file_path + "/" + file_name, s3_folder + "/" + file_name, S3_BUCKET_NAME)
             # local_path = os.path.join(root, file_name)
             # s3_key = os.path.join(s3Folder, file_name)
             # try:
@@ -124,6 +132,8 @@ download_from_geofabrik_t = PythonOperator(
 upload_to_s3_t = python_task = PythonOperator(
     task_id="upload_to_s3",
     python_callable=upload_to_s3,
+    op_args=["{{ ti.xcom_pull(task_ids='download_from_geofabrik') }}","south-america"],
+    provide_context=True,
     dag=dagRotas
 )
 

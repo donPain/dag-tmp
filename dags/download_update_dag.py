@@ -115,14 +115,14 @@ default_args = {
 
 dagRotas = DAG('download_update', default_args=default_args, schedule_interval=None)
 
-download_from_geofabrik = PythonOperator(
-    task_id='download_update_task',
+download_from_geofabrik_t = PythonOperator(
+    task_id='download_from_geofabrik',
     python_callable=download_from_geofabrik,
     op_args=["south-america", datetime(2023,10,20)],
     dag=dagRotas
 )
 
-upload_to_s3 = python_task = PythonOperator(
+upload_to_s3_t = python_task = PythonOperator(
     task_id="upload_to_s3",
     python_callable=upload_to_s3,
     dag=dagRotas

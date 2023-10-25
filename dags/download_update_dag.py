@@ -12,7 +12,7 @@ download_dir = "/opt/airflow/workdir/"
 S3_BUCKET_NAME = 'routes-dag-exec'
 S3_HOOK = S3Hook(aws_conn_id="aws_pessoal")
 
-def donwload_from_geofabrik(continent, date_ini=None):
+def download_from_geofabrik(continent, date_ini):
 
     today_date = datetime.now().strftime("%d-%m-%Y")
     download_dir_today = os.path.join(download_dir + "/" + continent, today_date)

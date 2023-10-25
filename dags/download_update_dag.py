@@ -129,5 +129,5 @@ upload_to_s3_t = python_task = PythonOperator(
 )
 
 
-download_from_geofabrik >> upload_to_s3
+download_from_geofabrik_t >> upload_to_s3_t
 

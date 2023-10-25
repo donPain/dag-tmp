@@ -12,8 +12,7 @@ download_dir = "/opt/airflow/workdir/"
 S3_BUCKET_NAME = 'routes-dag-exec'
 S3_HOOK = S3Hook(aws_conn_id="aws_pessoal")
 
-def download_from_geofabrik(**context, continent, date_ini=None):
-    ti = context["ti"]
+def download_from_geofabrik(continent, date_ini=None, ti):
     today_date = datetime.now().strftime("%d-%m-%Y")
     download_dir_today = os.path.join(download_dir + "/" + continent, today_date)
 
@@ -38,7 +37,7 @@ def download_osc_files(ti, osc_links, download_dir_today):
         file_name = os.path.join(download_dir_today, os.path.basename(link))  # Caminho completo do arquivo
         urllib.request.urlretrieve(link, file_name)
     
-    ti.xcom_push(key="task-dir", value=download_dir_today)
+    ti.xcoms_push(key="task-dir", value=download_dir_today)
 
 
 def get_folder_link(continent, date_ini=None):
@@ -91,7 +90,7 @@ def get_osc_links(folder_link, date_ini):
 
 def upload_to_s3(ti):
     s3Folder = continent +"/"+ datetime.now().strftime("%d-%m-%Y")
-    filePath = ti.xcom_pull(key="task-dir", task_ids='download_from_geofabrik')
+    filePath = ti.xcoms_pull(key="task-dir", task_ids='download_from_geofabrik')
     for root, dirs, files in os.walk(localDir):
         for file_name in files:
             print(file_name)

@@ -123,7 +123,7 @@ download_from_geofabrik = PythonOperator(
 
 upload_to_s3 = python_task = PythonOperator(
     task_id="upload_to_s3",
-    python_callable=upload_to_s3
+    python_callable=upload_to_s3,
     dag=dagRotas
 )
 

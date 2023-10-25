@@ -12,7 +12,7 @@ download_dir = "/opt/airflow/workdir/"
 S3_BUCKET_NAME = 'routes-dag-exec'
 S3_HOOK = S3Hook(aws_conn_id="aws_pessoal")
 
-def download_from_geofabrik(continent, date_ini):
+def download_from_geofabrik(ti, continent, date_ini=None):
 
     today_date = datetime.now().strftime("%d-%m-%Y")
     download_dir_today = os.path.join(download_dir + "/" + continent, today_date)
@@ -25,7 +25,7 @@ def download_from_geofabrik(continent, date_ini):
     if folder_link:
         osc_links = get_osc_links(folder_link, date_ini)
         if osc_links:
-            download_osc_files(osc_links, download_dir_today)
+            download_osc_files(ti, osc_links, download_dir_today)
             print("Downloads concluídos")
         else:
             print("Sem novas atualizações")

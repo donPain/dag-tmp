@@ -6,7 +6,7 @@ from airflow.operators.python import PythonOperator
 from datetime import datetime
 
 
-download_dir = "/opt/airflow/workdir/downloads"
+download_dir = "/opt/airflow/workdir/downloads/"
 S3_BUCKET_NAME = 'routes-dag-exec'
 
 def download_from_geofabrik(continent, date_ini=None):

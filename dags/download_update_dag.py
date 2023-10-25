@@ -31,7 +31,7 @@ dagRotas = DAG('download_update', default_args=default_args, schedule_interval=N
 download_from_geofabrik_t = PythonOperator(
     task_id='download_from_geofabrik',
     python_callable=download_from_geofabrik,
-    op_args=["south-america", datetime(2023,10,20)],
+    op_args=["south-america", datetime(2023,10,25)],
     dag=dagRotas
 )
 

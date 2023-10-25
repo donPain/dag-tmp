@@ -1,5 +1,6 @@
 
 from bs4 import BeautifulSoup
+from datetime import datetime
 import requests
 
 base_url = 'http://download.geofabrik.de/'

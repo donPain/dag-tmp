@@ -11,8 +11,8 @@ from airflow.providers.cncf.kubernetes.operators.pod import KubernetesPodOperato
 from airflow.utils.dates import days_ago
 
 
-UPDATE_DATABASE=true;
-UPDATE_FILE=true;
+UPDATE_DATABASE=True;
+UPDATE_FILE=True;
 
 
 volume = k8s.V1Volume(
@@ -34,6 +34,7 @@ with DAG(
         "apply_update",
         default_args=default_args,
         schedule_interval="@hourly",
+        start_date=(2023,10,26),
         catchup=False,
 ) as dag:
 

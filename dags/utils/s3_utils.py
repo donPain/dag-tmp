@@ -40,7 +40,7 @@ def download_file(key, output, bucket):
             key=key,
             bucket_name=bucket,
             local_path=output,
-            preserve_file_name=False
+            preserve_file_name=True
             )
     except AirflowException as e:
         print(f"Erro ao baixar o arquivo {key} do Amazon S3: {str(e)}")

@@ -68,7 +68,8 @@ with DAG(
         task_id="osmosis_update_file_t",
         volumes=[volume],
         volume_mounts=[volume_mount],
-        on_finish='delete_pod',
+        in_cluster=True,
+        on_finish_action='delete_pod',
         deferrable=True
     )
 

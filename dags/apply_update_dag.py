@@ -1,20 +1,20 @@
-import subprocess
 from kubernetes.client import models as k8s
+from utils import osmosis_command, s3_utils;
 from datetime import datetime
+from airflow.operators.python import PythonOperator
 
 
 from airflow import DAG
 
-from airflow.contrib.hooks.aws_hook import AwsHook
-from airflow.operators.docker_operator import DockerOperator
-from airflow.operators.bash import BashOperator
 from airflow.providers.cncf.kubernetes.operators.pod import KubernetesPodOperator
-from airflow.utils.dates import days_ago
 
 
-UPDATE_DATABASE=True;
+UPDATE_DATABASE=False;
 UPDATE_FILE=True;
-
+CONTINENT="south-america"
+WORKDIR_PATH="/opt/airflow/workdir"
+EXEC_DATE= datetime.now().strftime("%d-%m-%Y")
+S3_BUCKET_NAME = 'routes-dag-exec'
 
 volume = k8s.V1Volume(
     name="workdir-pv",
@@ -22,14 +22,20 @@ volume = k8s.V1Volume(
 )
 
 volume_mount = k8s.V1VolumeMount(
-    name="workdir-pv", mount_path="/opt/airflow/workdir", sub_path=None, read_only=False
+    name="workdir-pv", mount_path=WORKDIR_PATH, sub_path=None, read_only=False
 )
 
 
 default_args = {
     'owner': 'slf_routes',
-    'description': 'Utiliza os arquivos .osc para atualizar arquivo .pbf e banco de dados.',
+    'description': 'Utiliza os arquivos .osc para atualizar arquivo .pbf e banco de dados.'
 }
+
+def download_from_s3():
+    s3_folder = f"{CONTINENT}/{EXEC_DATE}"
+    output = f"{WORKDIR_PATH}/download{CONTINENT}/{EXEC_DATE}"
+    s3_utils.download_all_files_from_folder(s3_folder, output, S3_BUCKET_NAME)
+
 
 with DAG(
         "apply_update",
@@ -39,22 +45,27 @@ with DAG(
         catchup=False,
 ) as dag:
 
-    osmosis_update_file_task = KubernetesPodOperator(
-        name="osmosis-processor",
-        cmds=["bash", "-cx"],
-        arguments=[
-            "/osmosis/package/bin/osmosis --help"
-            # "sleep 500"
-        ],
-        image='334077612733.dkr.ecr.sa-east-1.amazonaws.com/routes/osmosis:latest',
-        image_pull_secrets='aws-cred-new',
-        startup_timeout_seconds=900,
-        reattach_on_restart=False,
-        is_delete_operator_pod=True,
-        task_id="osmosis",
-        volumes=[volume],
-        volume_mounts=[volume_mount]
+    download_from_s3_t = python_task = PythonOperator(
+        task_id="download_from_s3",
+        python_callable=download_from_s3
     )
+
+    # osmosis_update_file_task = KubernetesPodOperator(
+    #     name="osmosis-processor",
+    #     cmds=["bash", "-cx"],
+    #     arguments=[
+    #         osmosis_command.apply_changes_pbf("/osmosis/package/bin/osmosis", WORKDIR_PATH + "/" + CONTINENT, )"
+    #         # "sleep 500"
+    #     ],
+    #     image='334077612733.dkr.ecr.sa-east-1.amazonaws.com/routes/osmosis:latest',
+    #     image_pull_secrets='aws-cred-new',
+    #     startup_timeout_seconds=900,
+    #     reattach_on_restart=False,
+    #     is_delete_operator_pod=True,
+    #     task_id="osmosis",
+    #     volumes=[volume],
+    #     volume_mounts=[volume_mount]
+    # )
 
     # createTmp  = BashOperator(
     #     task_id="bash_task",
@@ -68,4 +79,4 @@ with DAG(
 
 
 
-    osmosis_update_file_task.dry_run()
+    download_from_s3_t

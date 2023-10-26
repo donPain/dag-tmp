@@ -26,7 +26,6 @@ def cleanup_volume(file_path):
         for name in files:
             os.remove(os.path.join(root, name))
         for name in dirs:
-            # Antes de tentar remover, vamos garantir que esteja vazia
             sub_path = os.path.join(root, name)
             if not os.listdir(sub_path):
                 os.rmdir(sub_path)

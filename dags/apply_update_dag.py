@@ -33,7 +33,7 @@ default_args = {
 
 def download_from_s3():
     s3_folder = f"{CONTINENT}/{EXEC_DATE}"
-    output = f"{WORKDIR_PATH}/download{CONTINENT}/{EXEC_DATE}"
+    output = f"{WORKDIR_PATH}/download/{CONTINENT}/{EXEC_DATE}"
     s3_utils.download_all_files_from_folder(s3_folder, output, S3_BUCKET_NAME)
 
 

@@ -1,6 +1,5 @@
 import os
-from utils import s3_utils
-from utils import geofabrik
+from utils import geofabrik, files_utils, s3_utils
 from airflow import DAG
 from airflow.operators.python import PythonOperator
 from datetime import datetime
@@ -22,16 +21,9 @@ def upload_to_s3(file_path, continent):
 
 def cleanup_volume(file_path):
     print("Cleaning volume dir: " + file_path)
-    for root, dirs, files in os.walk(file_path, topdown=False):
-        for name in files:
-            os.remove(os.path.join(root, name))
-        for name in dirs:
-            sub_path = os.path.join(root, name)
-            if not os.listdir(sub_path):
-                os.rmdir(sub_path)
-            else:
-                print(f"A pasta {sub_path} não está vazia e não pode ser removida.")
-        
+    files_utils.cleanup_volume(file_path)
+   
+   
 default_args = {
     'owner': 'slf_routes',
     'description': 'Baixa atualizações no formato .osc do site Geofabrik e salva no S3 para consumo posterior.',

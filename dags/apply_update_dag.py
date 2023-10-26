@@ -1,5 +1,5 @@
 from kubernetes.client import models as k8s
-from utils import osmosis_command, s3_utils;
+from utils import osmosis_command, s3_utils, files_utils;
 from datetime import datetime
 from airflow.operators.python import PythonOperator
 
@@ -34,6 +34,7 @@ default_args = {
 def download_from_s3():
     s3_folder = f"{CONTINENT}/{EXEC_DATE}"
     output = f"{WORKDIR_PATH}/{CONTINENT}/download/{EXEC_DATE}"
+    files_utils.cleanup_volume(output)
     s3_utils.download_all_files_from_folder(s3_folder, output, S3_BUCKET_NAME)
 
 

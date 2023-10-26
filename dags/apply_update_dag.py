@@ -56,7 +56,7 @@ with DAG(
         cmds=["bash", "-cx"],
         arguments=[
             osmosis_command.apply_changes_pbf("/osmosis/package/bin/osmosis ", 
-                                                f"{WORKDIR_PATH}/{CONTINENT}/{CONTINENT}.osm.pbf",
+                                                f"{WORKDIR_PATH}/{CONTINENT}/{CONTINENT}-latest.osm.pbf",
                                                 f"{WORKDIR_PATH}/{CONTINENT}/download/{EXEC_DATE}/861.osc.gz",
                                                 f"{WORKDIR_PATH}/{CONTINENT}/{CONTINENT}-{EXEC_DATE}.osm.pbf")
         ],

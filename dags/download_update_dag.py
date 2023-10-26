@@ -16,8 +16,8 @@ def upload_to_s3(file_path, continent):
     s3_folder = continent +"/"+ datetime.now().strftime("%d-%m-%Y")
     for root, _, files in os.walk(file_path): 
         for file_name in files:
-            finalFile = os.path.join(root,file_name)
-            s3_utils.upload_file(finalFile, s3_folder + "/" + file_name, S3_BUCKET_NAME)
+            final_file = os.path.join(root,file_name)
+            s3_utils.upload_file(final_file, s3_folder + "/" + file_name, S3_BUCKET_NAME)
 
 
 def cleanup_volume(file_path):
@@ -26,8 +26,12 @@ def cleanup_volume(file_path):
         for name in files:
             os.remove(os.path.join(root, name))
         for name in dirs:
-            os.rmdir(os.path.join(root, name))
-
+            # Antes de tentar remover, vamos garantir que esteja vazia
+            sub_path = os.path.join(root, name)
+            if not os.listdir(sub_path):
+                os.rmdir(sub_path)
+            else:
+                print(f"A pasta {sub_path} não está vazia e não pode ser removida.")
         
 default_args = {
     'owner': 'slf_routes',

@@ -69,7 +69,7 @@ with DAG(
         volumes=[volume],
         volume_mounts=[volume_mount],
         in_cluster=True,
-        on_finish_action='delete_pod',
+        on_finish_action="delete_pod",
         deferrable=True
     )
 

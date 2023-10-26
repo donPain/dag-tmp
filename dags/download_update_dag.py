@@ -15,7 +15,7 @@ def download_from_geofabrik(continent, date_ini=None):
 def upload_to_s3(file_path, continent):
     s3_folder = continent +"/"+ datetime.now().strftime("%d-%m-%Y")
     print("file-path: " + file_path)
-    for root, directory, files in os.walk(file_path):
+    for root, files in os.walk(file_path):
         for file_name in files:
             finalFile = os.path.join(root,file_name)
             print(finalFile)

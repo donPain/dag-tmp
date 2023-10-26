@@ -15,10 +15,10 @@ def download_from_geofabrik(continent, date_ini=None):
 def upload_to_s3(file_path, continent):
     s3_folder = continent +"/"+ datetime.now().strftime("%d-%m-%Y")
     print("file-path: " + file_path)
-    for files in os.walk(file_path + "/"):
+    for files in os.walk(file_path):
         for file_name in files:
             print(file_name)
-            s3_utils.upload_file(file_path + "/" + file_name, s3_folder + "/" + file_name, S3_BUCKET_NAME)
+            # s3_utils.upload_file(file_path + "/" + file_name, s3_folder + "/" + file_name, S3_BUCKET_NAME)
         
 default_args = {
     'owner': 'airflow',
@@ -31,7 +31,7 @@ dagRotas = DAG('download_update', default_args=default_args, schedule_interval=N
 download_from_geofabrik_t = PythonOperator(
     task_id='download_from_geofabrik',
     python_callable=download_from_geofabrik,
-    op_args=["south-america", datetime(2023,10,25)],
+    op_args=["south-america", datetime(2023,10,26)],
     dag=dagRotas
 )
 

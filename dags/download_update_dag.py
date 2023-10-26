@@ -13,7 +13,6 @@ def download_from_geofabrik(continent, date_ini=None):
     return geofabrik.download_continent_updates(continent, date_ini, download_dir)
 
 def upload_to_s3(file_path, continent):
-    print("Execution Date = " + ds)
     s3_folder = continent +"/"+ datetime.now().strftime("%d-%m-%Y")
     for root, _, files in os.walk(file_path): 
         for file_name in files:

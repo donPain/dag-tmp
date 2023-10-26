@@ -50,7 +50,7 @@ with DAG(
         python_callable=download_from_s3
     )
 
-    osmosis_update_file_task = KubernetesPodOperator(
+    osmosis_update_file_t = KubernetesPodOperator(
         name="osmosis-processor",
         cmds=["bash", "-cx"],
         arguments=[
@@ -64,7 +64,7 @@ with DAG(
         startup_timeout_seconds=900,
         reattach_on_restart=False,
         is_delete_operator_pod=True,
-        task_id="osmosis",
+        task_id="osmosis_update_file_t",
         volumes=[volume],
         volume_mounts=[volume_mount]
     )
@@ -81,4 +81,4 @@ with DAG(
 
 
 
-    download_from_s3_t
+    download_from_s3_t >> osmosis_update_file_t

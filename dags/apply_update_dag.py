@@ -11,6 +11,10 @@ from airflow.providers.cncf.kubernetes.operators.pod import KubernetesPodOperato
 from airflow.utils.dates import days_ago
 
 
+UPDATE_DATABASE=true;
+UPDATE_FILE=true;
+
+
 volume = k8s.V1Volume(
     name="workdir-pv",
     persistent_volume_claim=k8s.V1PersistentVolumeClaimVolumeSource(claim_name="airflow-claim"),
@@ -22,16 +26,12 @@ volume_mount = k8s.V1VolumeMount(
 
 
 default_args = {
-    "owner": "don",
-    "description": "Fetches and stores ECR credentials to allow Docker daemon to pull images",
-    "depend_on_past": False,
-    "start_date": days_ago(1),
-    "email_on_failure": False,
-    "email_on_retry": False,
+    'owner': 'slf_routes',
+    'description': 'Utiliza os arquivos .osc para atualizar arquivo .pbf e banco de dados.',
 }
 
 with DAG(
-        "kubernetes_osmosis",
+        "apply_update",
         default_args=default_args,
         schedule_interval="@hourly",
         catchup=False,
@@ -41,16 +41,14 @@ with DAG(
         name="osmosis-processor",
         cmds=["bash", "-cx"],
         arguments=[
-            # "/osmosis/package/bin/osmosis --help && sleep 20"
-            "sleep 500"
+            "/osmosis/package/bin/osmosis --help"
+            # "sleep 500"
         ],
         image='334077612733.dkr.ecr.sa-east-1.amazonaws.com/routes/osmosis:latest',
         image_pull_secrets='aws-cred-new',
         startup_timeout_seconds=900,
         reattach_on_restart=False,
         is_delete_operator_pod=True,
-        # do_xcom_push=True,
-        # get_logs=False,
         task_id="osmosis",
         volumes=[volume],
         volume_mounts=[volume_mount]

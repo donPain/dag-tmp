@@ -52,7 +52,7 @@ with DAG('download_and_save_osc',
     )
 
     cleanup_volume_t = PythonOperator(
-        task_id="upload_to_s3",
+        task_id="cleanup_volume",
         python_callable=cleanup_volume,
         op_args=["{{ ti.xcom_pull(task_ids='download_from_geofabrik') }}"],
         provide_context=True

@@ -4,7 +4,7 @@ path_osmosis = "osmosis"
 path_pbf = "input.pbf"
 path_osm = "changeset.xml"
 path_final = "output.pbf"
-
+type = command_type.CommandType
 
 def apply_changes_pbf(path_osmosis, path_pbf, path_osm, path_final):
     return f'{path_osmosis} --read-pbf file={path_pbf} outPipe.0=pipe0 --read-xml-change file={path_osm} outPipe.0=pipe1 --apply-change inPipe.0=pipe0 inPipe.1=pipe1 outPipe.0=pipe2 --write-pbf file={path_final} inPipe.0=pipe2'
@@ -17,9 +17,9 @@ def update_db_pbf(path_osmosis, path_pbf):
 
 def osmosis_commands(command_type):
     command_dict = {
-        command_type.CommandType.UPDATE_FILE: lambda: apply_changes_pbf(path_osmosis, path_pbf, path_osm, path_final),
-        command_type.CommandType.UPDATE_DATABASE_XML: lambda: update_db_xml(path_osmosis, path_osm),
-        command_type.CommandType.UPDATE_DATABASE_PBF: lambda: update_db_pbf(path_osmosis, path_pbf)
+        type.UPDATE_FILE: lambda: apply_changes_pbf(path_osmosis, path_pbf, path_osm, path_final),
+        type.UPDATE_DATABASE_XML: lambda: update_db_xml(path_osmosis, path_osm),
+        type.UPDATE_DATABASE_PBF: lambda: update_db_pbf(path_osmosis, path_pbf)
     }
     print("Valor de path_osm:", path_osm)
     command_function = command_dict.get(command_type)
@@ -31,5 +31,5 @@ def osmosis_commands(command_type):
     print("Comando: ", command)
     return command
 
-command_type = CommandType.UPDATE_DATABASE_PBF
-osmosis_command = osmosis_commands(command_type)
+
+# osmosis_command = osmosis_commands(command_type)

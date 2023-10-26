@@ -29,16 +29,16 @@ def download_all_files_from_folder(s3_folder, output_folder, bucket):
      objects = S3_HOOK.list_keys(prefix=s3_folder, bucket_name=bucket)
      for obj_key in objects:
         print("key -> " + obj_key)
-        download_file(obj_key, output_folder)
+        download_file(obj_key, output_folder, bucket)
 
 
 
-def download_file(key, output):
+def download_file(key, output, bucket):
 
     try:
         S3_HOOK.download_file(
             key=key,
-            bucket_name=S3_BUCKET_NAME,
+            bucket_name=bucket,
             local_path=output,
             preserve_file_name=False
             )

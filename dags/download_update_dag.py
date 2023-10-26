@@ -16,7 +16,7 @@ def upload_to_s3(file_path, continent):
     s3_folder = continent +"/"+ datetime.now().strftime("%d-%m-%Y")
     print("file-path: " + file_path)
     for files in os.walk(file_path):
-        print("Files: " + files)
+        print(files)
         for file_name in files:
             print(file_path + "/" + file_name)
             # s3_utils.upload_file(file_path + "/" + file_name, s3_folder + "/" + file_name, S3_BUCKET_NAME)

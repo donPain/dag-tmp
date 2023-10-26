@@ -1,4 +1,4 @@
-from command_type import CommandType
+from utils import command_type
 
 path_osmosis = "osmosis"
 path_pbf = "input.pbf"
@@ -17,9 +17,9 @@ def update_db_pbf(path_osmosis, path_pbf):
 
 def osmosis_commands(command_type):
     command_dict = {
-        CommandType.UPDATE_FILE: lambda: apply_changes_pbf(path_osmosis, path_pbf, path_osm, path_final),
-        CommandType.UPDATE_DATABASE_XML: lambda: update_db_xml(path_osmosis, path_osm),
-        CommandType.UPDATE_DATABASE_PBF: lambda: update_db_pbf(path_osmosis, path_pbf)
+        command_type.CommandType.UPDATE_FILE: lambda: apply_changes_pbf(path_osmosis, path_pbf, path_osm, path_final),
+        command_type.CommandType.UPDATE_DATABASE_XML: lambda: update_db_xml(path_osmosis, path_osm),
+        command_type.CommandType.UPDATE_DATABASE_PBF: lambda: update_db_pbf(path_osmosis, path_pbf)
     }
     print("Valor de path_osm:", path_osm)
     command_function = command_dict.get(command_type)

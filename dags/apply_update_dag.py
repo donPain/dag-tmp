@@ -67,19 +67,11 @@ with DAG(
         is_delete_operator_pod=True,
         task_id="osmosis_update_file_t",
         volumes=[volume],
-        volume_mounts=[volume_mount]
+        volume_mounts=[volume_mount],
+        deferrable=True
     )
 
-    # createTmp  = BashOperator(
-    #     task_id="bash_task",
-    #     bash_command='cat /opt/airflow/workdir/teste.txt'
-    # )
-
-    # # readTmp =  BashOperator(
-    # #     task_id="bash_task_2",
-    # #     bash_command='cat /opt/airflow/workdir/test.txt'
-    # # )
-
+ 
 
 
     download_from_s3_t >> osmosis_update_file_t

@@ -35,7 +35,7 @@ default_args = {
 with DAG('download_and_save_osc', 
          default_args=default_args,
          schedule_interval=None,
-         start_date=(2023,10,26)
+         start_date=datetime(2023,10,26)
          ) as download_update_dag:
 
     download_from_geofabrik_t = PythonOperator(

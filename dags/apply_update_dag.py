@@ -1,5 +1,6 @@
 import subprocess
 from kubernetes.client import models as k8s
+from datetime import datetime
 
 
 from airflow import DAG
@@ -34,7 +35,7 @@ with DAG(
         "apply_update",
         default_args=default_args,
         schedule_interval="@hourly",
-        start_date=(2023,10,26),
+        start_date=datetime(2023, 10, 19),
         catchup=False,
 ) as dag:
 

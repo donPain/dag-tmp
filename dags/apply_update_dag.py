@@ -33,7 +33,7 @@ default_args = {
 
 def download_from_s3():
     s3_folder = f"{CONTINENT}/{EXEC_DATE}"
-    output = f"{WORKDIR_PATH}/download/{CONTINENT}/{EXEC_DATE}"
+    output = f"{WORKDIR_PATH}/{CONTINENT}/download/{EXEC_DATE}"
     s3_utils.download_all_files_from_folder(s3_folder, output, S3_BUCKET_NAME)
 
 
@@ -50,22 +50,24 @@ with DAG(
         python_callable=download_from_s3
     )
 
-    # osmosis_update_file_task = KubernetesPodOperator(
-    #     name="osmosis-processor",
-    #     cmds=["bash", "-cx"],
-    #     arguments=[
-    #         osmosis_command.apply_changes_pbf("/osmosis/package/bin/osmosis", WORKDIR_PATH + "/" + CONTINENT, )"
-    #         # "sleep 500"
-    #     ],
-    #     image='334077612733.dkr.ecr.sa-east-1.amazonaws.com/routes/osmosis:latest',
-    #     image_pull_secrets='aws-cred-new',
-    #     startup_timeout_seconds=900,
-    #     reattach_on_restart=False,
-    #     is_delete_operator_pod=True,
-    #     task_id="osmosis",
-    #     volumes=[volume],
-    #     volume_mounts=[volume_mount]
-    # )
+    osmosis_update_file_task = KubernetesPodOperator(
+        name="osmosis-processor",
+        cmds=["bash", "-cx"],
+        arguments=[
+            osmosis_command.apply_changes_pbf("/osmosis/package/bin/osmosis ", 
+                                                f"{WORKDIR_PATH}/{CONTINENT}/{CONTINENT}.osm.pbf",
+                                                f"{WORKDIR_PATH}/{CONTINENT}/download/{EXEC_DATE}/861.osc.gz",
+                                                f"{WORKDIR_PATH}/{CONTINENT}/{CONTINENT}-{EXEC_DATE}.osm.pbf")
+        ],
+        image='334077612733.dkr.ecr.sa-east-1.amazonaws.com/routes/osmosis:latest',
+        image_pull_secrets='aws-cred-new',
+        startup_timeout_seconds=900,
+        reattach_on_restart=False,
+        is_delete_operator_pod=True,
+        task_id="osmosis",
+        volumes=[volume],
+        volume_mounts=[volume_mount]
+    )
 
     # createTmp  = BashOperator(
     #     task_id="bash_task",

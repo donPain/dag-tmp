@@ -26,7 +26,7 @@ def upload_file(local_path, key, bucket):
 
 def download_all_files_from_folder(s3_folder, output_folder, bucket):
      print(f"s3_folder -> {s3_folder}\n output_folder -> {output_folder}\n bucket -> {bucket}")
-     objects = S3_HOOK.list_keys(key=s3_folder, bucket_name=bucket)
+     objects = S3_HOOK.list_keys(prefix=s3_folder, bucket_name=bucket)
      for obj_key in objects:
         print("key -> " + obj_key)
         download_file(obj_key, output_folder)

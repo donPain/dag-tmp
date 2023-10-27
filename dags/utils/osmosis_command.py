@@ -1,4 +1,4 @@
-from utils import command_type, 
+from utils import command_type
 
 path_osmosis = "osmosis"
 path_pbf = "input.pbf"
@@ -14,7 +14,8 @@ def update_db_xml(path_osmosis, path_osm):
 
 def update_db_pbf(path_osmosis, path_pbf):
     return f'{path_osmosis} --read-pbf file={path_pbf} --upload-apidb host="localhost" database="postgres" user="postgres" password="agro93ville" validateSchemaVersion=false'
-    
+
+# def merge_osc(path_osmosis, f_osc, s_osc,)
 
 def osmosis_commands(command_type):
     command_dict = {

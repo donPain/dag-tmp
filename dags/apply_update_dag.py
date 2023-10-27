@@ -63,12 +63,13 @@ with DAG(
         image='334077612733.dkr.ecr.sa-east-1.amazonaws.com/routes/osmosis:latest',
         image_pull_secrets='aws-cred-new',
         startup_timeout_seconds=900,
-        is_delete_operator_pod=True,
+        # is_delete_operator_pod=True,
         task_id="osmosis_update_file_t",
         volumes=[volume],
         volume_mounts=[volume_mount],
         # do_xcom_push=True,
         in_cluster=True,
+        on_finish_action='delete_pod',
         deferrable=True
     )
 

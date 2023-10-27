@@ -2,6 +2,7 @@ import os
 from utils import geofabrik, files_utils, s3_utils
 from airflow import DAG
 from airflow.operators.python import PythonOperator
+from airflow.operators.trigger_dagrun import TriggerDagRunOperator
 from datetime import datetime
 
 
@@ -23,7 +24,7 @@ def cleanup_volume(file_path):
     print("Cleaning volume dir: " + file_path)
     files_utils.cleanup_volume(file_path)
    
-   
+
 default_args = {
     'owner': 'slf_routes',
     'description': 'Baixa atualizações no formato .osc do site Geofabrik e salva no S3 para consumo posterior.',
@@ -56,6 +57,12 @@ with DAG('download_and_save_osc',
         provide_context=True
     )
 
+    start_apply_dag_t = TriggerDagRunOperator(
+        task_id="start_apply_dag",
+        trigger_dag_id="apply_update",
+        deferrable=True
+    )
 
-download_from_geofabrik_t >> upload_to_s3_t >> cleanup_volume_t
+
+download_from_geofabrik_t >> upload_to_s3_t >> cleanup_volume_t >> start_apply_dag_t
 

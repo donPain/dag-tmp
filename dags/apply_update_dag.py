@@ -67,7 +67,7 @@ with DAG(
         task_id="osmosis_update_file_t",
         volumes=[volume],
         volume_mounts=[volume_mount],
-        do_xcom_push=True,
+        # do_xcom_push=True,
         in_cluster=True,
         deferrable=True
     )

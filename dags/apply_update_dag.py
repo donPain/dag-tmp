@@ -57,7 +57,7 @@ with DAG(
         arguments=[
             osmosis_command.apply_changes_pbf("/osmosis/package/bin/osmosis ", 
                                                 f"{WORKDIR_PATH}/{CONTINENT}/{CONTINENT}-latest.osm.pbf",
-                                                f"{WORKDIR_PATH}/{CONTINENT}/download/{EXEC_DATE}/861.osc.gz",
+                                                f"{WORKDIR_PATH}/{CONTINENT}/download/{EXEC_DATE}/862.osc.gz",
                                                 f"{WORKDIR_PATH}/{CONTINENT}/{CONTINENT}-{EXEC_DATE}.osm.pbf")
         ],
         image='334077612733.dkr.ecr.sa-east-1.amazonaws.com/routes/osmosis:latest',
@@ -68,8 +68,8 @@ with DAG(
         volumes=[volume],
         volume_mounts=[volume_mount],
         do_xcom_push=True,
-        in_cluster=True
-        # deferrable=True
+        in_cluster=True,
+        deferrable=True
     )
 
  

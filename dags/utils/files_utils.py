@@ -11,3 +11,7 @@ def cleanup_volume(file_path):
                 os.rmdir(sub_path)
             else:
                 print(f"A pasta {sub_path} não está vazia e não pode ser removida.")
+
+
+# def get_all_files_by_type(path, type):
+    

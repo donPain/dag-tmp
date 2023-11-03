@@ -1,4 +1,5 @@
 import os
+import re
 
 def cleanup_volume(file_path):
     print("Cleaning volume dir: " + file_path)
@@ -12,6 +13,9 @@ def cleanup_volume(file_path):
             else:
                 print(f"A pasta {sub_path} não está vazia e não pode ser removida.")
 
-
-# def get_all_files_by_type(path, type):
-    
+def get_osc_file_paths(dir):
+    all_files = os.listdir(dir)
+    files = [file for file in all_files if file.endswith(".osc.gz")]
+    sorted_files = sorted(files, key=lambda x: int(re.split(r'\D+', x)[0]))
+    file_paths = [os.path.join(dir, file) for file in sorted_files]
+    return file_paths

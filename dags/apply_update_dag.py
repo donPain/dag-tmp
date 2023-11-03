@@ -1,6 +1,6 @@
 from kubernetes.client import models as k8s
 import sys
-sys.path.append('/opt/airflow/dags/utils')
+sys.path.insert(0,'/opt/airflow/dags/')
 import utils as utils
 from utils import osmosis_command, s3_utils, files_utils;
 from datetime import datetime

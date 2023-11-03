@@ -1,4 +1,7 @@
 from kubernetes.client import models as k8s
+import sys
+sys.path.append('/opt/airflow/dags/utils')
+import utils as utils
 from utils import osmosis_command, s3_utils, files_utils;
 from datetime import datetime
 from airflow.operators.python import PythonOperator

@@ -1,7 +1,7 @@
 import os
 import sys
-sys.path.insert(0, '/opt/airflow/dags/repo/dags/utils')
-
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+import utils as utils
 from utils import geofabrik, files_utils, s3_utils
 from airflow import DAG
 from airflow.operators.python import PythonOperator

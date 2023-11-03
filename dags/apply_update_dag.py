@@ -1,8 +1,8 @@
-from kubernetes.client import models as k8s
 import os
 import sys
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 import utils as utils
+from kubernetes.client import models as k8s
 from utils import osmosis_command, s3_utils, files_utils;
 from datetime import datetime
 from airflow.operators.python import PythonOperator

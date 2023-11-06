@@ -1,10 +1,9 @@
-
 import os
 import sys
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-from kubernetes.client import models as k8s
-
 import utils as utils
+
+from kubernetes.client import models as k8s
 from utils import osmosis_command, s3_utils, files_utils;
 from datetime import datetime
 from airflow.operators.python import PythonOperator
@@ -20,7 +19,7 @@ UPDATE_FILE=True;
 CONTINENT="south-america"
 WORKDIR_PATH="/opt/airflow/workdir"
 EXEC_DATE= datetime.now().strftime("%d-%m-%Y")
-S3_BUCKET_NAME = 'slf-routes-dag-exec'
+S3_BUCKET_NAME = 'routes-dag-exec'
 
 volume = k8s.V1Volume(
     name="workdir-pv",
@@ -34,7 +33,7 @@ volume_mount = k8s.V1VolumeMount(
 
 default_args = {
     'owner': 'slf_routes',
-    'description': 'Utiliza os arquivos .osc para atualizar arquivo .pbf e banco de dados.'
+    'description': 'Utiliza os arquivos .osc para atualizar arquivo .pbf.'
 }
 
 def download_from_s3():
@@ -45,11 +44,12 @@ def download_from_s3():
 
 
 with DAG(
-        "apply_update",
+        "apply_update_file",
         default_args=default_args,
         schedule_interval="@hourly",
         start_date=datetime(2023, 10, 19),
         catchup=False,
+        tags=["rotas"]
 ) as dag:
 
     download_from_s3_t = python_task = PythonOperator(
@@ -63,12 +63,13 @@ with DAG(
         arguments=[
             osmosis_command.apply_changes_pbf("/osmosis/package/bin/osmosis ", 
                                                 f"{WORKDIR_PATH}/{CONTINENT}/{CONTINENT}-latest.osm.pbf",
-                                                f"{WORKDIR_PATH}/{CONTINENT}/download/{EXEC_DATE}/862.osc.gz",
+                                                f"{WORKDIR_PATH}/{CONTINENT}/download/{EXEC_DATE}/merge-changes.osm",
                                                 f"{WORKDIR_PATH}/{CONTINENT}/{CONTINENT}-{EXEC_DATE}.osm.pbf")
         ],
         image='334077612733.dkr.ecr.sa-east-1.amazonaws.com/routes/osmosis:latest',
         image_pull_secrets='aws-cred-new',
         startup_timeout_seconds=900,
+        is_delete_operator_pod=True,
         task_id="osmosis_update_file_t",
         volumes=[volume],
         volume_mounts=[volume_mount],

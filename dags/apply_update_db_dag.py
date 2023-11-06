@@ -1,17 +1,12 @@
-
 import os
 import sys
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-from kubernetes.client import models as k8s
-
 import utils as utils
-from utils import osmosis_command, s3_utils, files_utils;
 from datetime import datetime
-from airflow.operators.python import PythonOperator
-
-
 from airflow import DAG
-
+from kubernetes.client import models as k8s
+from airflow.operators.python_operator import PythonOperator
+from utils import osmosis_command, s3_utils, files_utils;
 from airflow.providers.cncf.kubernetes.operators.pod import KubernetesPodOperator
 
 
@@ -34,7 +29,7 @@ volume_mount = k8s.V1VolumeMount(
 
 default_args = {
     'owner': 'slf_routes',
-    'description': 'Utiliza os arquivos .osc para atualizar arquivo .pbf e banco de dados.'
+    'description': 'Utiliza os arquivos .osc para atualizar banco de dados.'
 }
 
 def download_from_s3():
@@ -45,11 +40,12 @@ def download_from_s3():
 
 
 with DAG(
-        "apply_update",
+        "apply_update_db",
         default_args=default_args,
         schedule_interval="@hourly",
         start_date=datetime(2023, 10, 19),
         catchup=False,
+        tags=["rotas"]
 ) as dag:
 
     download_from_s3_t = python_task = PythonOperator(
@@ -57,18 +53,17 @@ with DAG(
         python_callable=download_from_s3
     )
 
-    osmosis_update_file_t = KubernetesPodOperator(
-        name="osmosis-processor",
+    osmosis_update_db_t = KubernetesPodOperator(
+        name="osmosis-processor-db",
         cmds=["bash", "-cx"],
         arguments=[
-            osmosis_command.apply_changes_pbf("/osmosis/package/bin/osmosis ", 
-                                                f"{WORKDIR_PATH}/{CONTINENT}/{CONTINENT}-latest.osm.pbf",
-                                                f"{WORKDIR_PATH}/{CONTINENT}/download/{EXEC_DATE}/862.osc.gz",
-                                                f"{WORKDIR_PATH}/{CONTINENT}/{CONTINENT}-{EXEC_DATE}.osm.pbf")
+            osmosis_command.update_db_xml("/osmosis/package/bin/osmosis ", 
+                                         f"{WORKDIR_PATH}/{CONTINENT}/download/{EXEC_DATE}/changes-merged.osm")
         ],
         image='334077612733.dkr.ecr.sa-east-1.amazonaws.com/routes/osmosis:latest',
         image_pull_secrets='aws-cred-new',
         startup_timeout_seconds=900,
+        is_delete_operator_pod=True,
         task_id="osmosis_update_file_t",
         volumes=[volume],
         volume_mounts=[volume_mount],
@@ -78,7 +73,6 @@ with DAG(
         deferrable=True
     )
 
- 
 
-
-    download_from_s3_t >> osmosis_update_file_t
+    
+    download_from_s3_t >> osmosis_update_db_t

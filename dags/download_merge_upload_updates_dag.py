@@ -1,31 +1,25 @@
 import os
 import sys
+from dags.dags.utils import geofabrik_utils
+from dags.dags.utils import osmosis_utils
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 import utils as utils
-from utils import geofabrik, files_utils, s3_utils, osmosis_command
+from utils import files_utils, s3_utils
 from airflow import DAG
+from airflow.models import Variable
 from airflow.operators.python import PythonOperator
 from datetime import datetime
 
+from airflow.providers.cncf.kubernetes.operators.pod import KubernetesPodOperator
+
+
 
 DOWNLOAD_DIR = "/opt/airflow/downloads/"
-S3_BUCKET_NAME = 'routes-dag-exec'
+S3_BUCKET_NAME = Variable.get('routes-dag-bucket')
 CONTINENT = 'south-america'
 
 def download_from_geofabrik(date_ini=None):
-    return geofabrik.download_continent_updates(CONTINENT, date_ini, DOWNLOAD_DIR)
-
-def merge_update_files(download_dir):
-    if download_dir is not None:
-        file_paths = files_utils.get_osc_file_paths(download_dir)
-        number_of_files = len(file_paths)
-        if number_of_files > 0:
-            file_path = osmosis_command.merge_osc_files(download_dir, file_paths, number_of_files)
-            return file_path
-        else:
-            return None
-    else:
-        return None
+    return geofabrik_utils.download_continent_updates(CONTINENT, date_ini, DOWNLOAD_DIR)
 
 def upload_to_s3(file_path):
     if file_path is not None:
@@ -55,10 +49,19 @@ with DAG('download_merge_and_upload_osc',
         op_args=[datetime(2023,10,26)]
     )
 
-    merge_osc_files_t = PythonOperator(
-        task_id='merge_osc_files',
-        python_callable=merge_update_files,
-        op_args=["{{ ti.xcom_pull(task_ids='download_from_geofabrik') }}"]
+    merge_osc_files_t = KubernetesPodOperator(
+        name="osmosis-processor",
+        cmds=["bash", "-cx"],
+        arguments=osmosis_utils.sh_merge_osc("{{ ti.xcom_pull(task_ids='download_from_geofabrik') }}")
+        image='334077612733.dkr.ecr.sa-east-1.amazonaws.com/routes/osmosis:latest',
+        image_pull_secrets='aws-cred-new',
+        startup_timeout_seconds=900,
+        task_id="merge_osc_files_t",
+        volumes=[volume],
+        volume_mounts=[volume_mount],
+        in_cluster=True,
+        on_finish_action='delete_pod',
+        deferrable=True
     )
 
     upload_to_s3_t = python_task = PythonOperator(
@@ -76,4 +79,3 @@ with DAG('download_merge_and_upload_osc',
     )
 
 download_from_geofabrik_t >> merge_osc_files_t >> upload_to_s3_t >> cleanup_volume_t
-

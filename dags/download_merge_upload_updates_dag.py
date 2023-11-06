@@ -79,3 +79,7 @@ with DAG('download_merge_and_upload_osc',
     )
 
 download_from_geofabrik_t >> merge_osc_files_t >> upload_to_s3_t >> cleanup_volume_t
+
+
+
+
